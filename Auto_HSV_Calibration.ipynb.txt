@@ -1,0 +1,107 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "3352a55f-e18e-47dc-98f9-192f311118f4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import Arm_Lib\n",
+    "Arm = Arm_Lib.Arm_Device()\n",
+    "joints_0 = [90, 135, 0, 0, 90, 10]\n",
+    "Arm.Arm_serial_servo_write6_array(joints_0, 1000)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ad56f37d-730f-4d15-b028-b7076c041efd",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "HSV-Min-Max of the selected mouse pointer : [0, 145, 238, 19, 175, 253]\n",
+      "HSV-Min-Max of the selected mouse pointer : [48, 75, 166, 78, 105, 196]\n",
+      "HSV-Min-Max of the selected mouse pointer : [95, 115, 173, 125, 145, 203]\n",
+      "HSV-Min-Max of the selected mouse pointer : [14, 126, 240, 44, 156, 255]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import cv2\n",
+    "import numpy as np\n",
+    " \n",
+    " \n",
+    "def mouseRGB(event,x,y,flags,param):\n",
+    "    if event == cv2.EVENT_LBUTTONDOWN: #checks mouse left button down condition\n",
+    "        colorsB = image[y,x,0]\n",
+    "        colorsG = image[y,x,1]\n",
+    "        colorsR = image[y,x,2]\n",
+    "        colors = image[y,x]\n",
+    "        hsv_value= np.uint8([[[colorsB ,colorsG,colorsR ]]])\n",
+    "        hsv = cv2.cvtColor(hsv_value,cv2.COLOR_BGR2HSV)\n",
+    "        #print (\"HSV : \" ,hsv)\n",
+    "        #print(\"Red: \",colorsR)\n",
+    "        #print(\"Green: \",colorsG)\n",
+    "        #print(\"Blue: \",colorsB)\n",
+    "        #print(\"BRG Format: \",colors)\n",
+    "        #print(\"Coordinates of pixel: X: \",x,\"Y: \",y))\n",
+    "        hsv = hsv.ravel()\n",
+    "        K = 15 #Threshold for min & max diffrence\n",
+    "        hsv_min = [0 if x <= K else x-K for x in hsv]\n",
+    "        hsv_max = [x+K if x <= (255-K) else x+0 for x in hsv]\n",
+    "        hsv_min_max = [hsv_min,hsv_max]\n",
+    "        hsv_min_max = [element for innerlist in hsv_min_max for element in innerlist]\n",
+    "        print(\"HSV-Min-Max of the selected mouse pointer :\",hsv_min_max)\n",
+    "\n",
+    "# Read an image, a window and bind the function to window\n",
+    "cap = cv2.VideoCapture(0)\n",
+    "while(1):\n",
+    "    _, image = cap.read()\n",
+    "    #image = cv2.imread(\"5.jpg\")\n",
+    "    cv2.namedWindow('mouseRGB')\n",
+    "    cv2.setMouseCallback('mouseRGB',mouseRGB)\n",
+    " \n",
+    "    #Do until esc pressed\n",
+    "    \n",
+    "    cv2.imshow('mouseRGB',image)\n",
+    "    if cv2.waitKey(20) & 0xFF == 27:\n",
+    "                break\n",
+    "        #if esc pressed, finish.\n",
+    "cv2.destroyAllWindows()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3fd5ca83-a8c0-45da-b61e-39b5ed9a606d",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
